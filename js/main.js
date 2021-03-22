@@ -95,11 +95,10 @@ function produceProjectItemPage() {
 
   /* Loop through collection to find matching project item */
   for (var i = 0; i < projectCollection["projects"].length; i++) {
-    console.log("ID:" + projectCollection["projects"][i]["project_id"] + " - PARAM: " + paramProjectID);
     if (projectCollection["projects"][i]["project_id"] == paramProjectID) {
-      console.log("Got a match...");
       let newProjectItemElement = produceItemContent(projectCollection["projects"][i]);
       mainDisplayElem.appendChild(newProjectItemElement);
+      break;
     }
   }
 }
@@ -164,7 +163,7 @@ function produceItemContent(projectJSON) {
   }
   projectElem.appendChild(projectDescriptionElem);
 
-  /* Project Additional Media */
+  /* Project External URL */
   if (projectExternalLinkElem != "" && projectExternalLinkElem != null) {
     projectExternalLinkElem.href = projectJSON["project_external_url"];
     projectExternalLinkElem.textContent = projectJSON["project_external_url"];
@@ -189,11 +188,6 @@ function produceItemContent(projectJSON) {
     }
     projectElem.appendChild(projectAdditionalMediaElem);
   }
-
-  // for (var i = 0; i < projectJSON[project_additional_media_files].length; i++) {
-  //
-  // }
-  /* OUTPUT: `/projectmedia/95/myPhoto.jpg` */
 
   return projectElem;
 

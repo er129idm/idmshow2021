@@ -43,7 +43,7 @@ function draw() {
         }
     }
 
-    if(millis() >= 60000) noLoop();
+    // if(millis() >= 60000) noLoop();
 }
 
 class Eraser {
