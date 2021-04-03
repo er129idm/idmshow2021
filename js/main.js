@@ -5,6 +5,29 @@ if (debugLogs) {
   console.log("main.js loaded...");
 }
 
+/* ----- JSON KEY TRANSLATIONS ----- */
+
+let pIDKey = "Net ID";
+let sNameKey = "Full Name";
+let pYearKey = "What year are you?";
+let pTitleKey = "Title of your project";
+let pMainURLKey = "Project Link";
+let pShortDescKey = "Short Description of your work (1 sentence)";
+let pLongDescKey = "Long Description of your work (4-6 sentences)";
+let pHashtagsKey = "Project Hashtag #";
+let pKeywordsKey = "Project Themes & Keywords";
+let sPersonalURLKey = "Link to your personal portfolio";
+let sLinkedinKey = "Linked In Handle";
+let sInstagramKey = "Instagram Handle";
+let sYoutubeKey = "Youtube";
+let sTwitterKey = "Twitter Handle";
+let pAdditionalMediaKey = "Supporting Images";
+
+let pThesisValue = "Second Year Grad (Thesis Project)";
+
+
+/* ----- MAIN JS ----- */
+
 let paramCategory = "home" /* Page type – available values are "home", "thesis", "senior", "item" */
 let paramProjectID; /* Project ID */
 let mainDisplayElem; /* "Main" content section element of any page */
@@ -26,16 +49,20 @@ function initPage(event) {
   }
 
   /* Dynamic page color */
-  let newRandomGradientColorA_R = Math.floor(240 + Math.random()*10);
-  let newRandomGradientColorA_G = Math.floor(230 + Math.random()*10);
-  let newRandomGradientColorA_B = Math.floor(240 + Math.random()*10);
-  let newRandomGradientColorB_R = Math.floor(240 + Math.random()*10);
-  let newRandomGradientColorB_G = Math.floor(230 + Math.random()*10);
-  let newRandomGradientColorB_B = Math.floor(240 + Math.random()*10);
+  let newRandomGradientColorA_R = Math.floor(240 + Math.random() * 10);
+  let newRandomGradientColorA_G = Math.floor(230 + Math.random() * 10);
+  let newRandomGradientColorA_B = Math.floor(240 + Math.random() * 10);
+  let newRandomGradientColorB_R = Math.floor(240 + Math.random() * 10);
+  let newRandomGradientColorB_G = Math.floor(230 + Math.random() * 10);
+  let newRandomGradientColorB_B = Math.floor(240 + Math.random() * 10);
   let colorAString = "rgba(" + newRandomGradientColorA_R + "," + newRandomGradientColorA_G + "," + newRandomGradientColorA_B + ")";
   let colorBString = "rgba(" + newRandomGradientColorB_R + "," + newRandomGradientColorB_G + "," + newRandomGradientColorB_B + ")";
-  document.documentElement.style.setProperty('--gradientColorA', colorAString);
-  document.documentElement.style.setProperty('--gradientColorB', colorBString);
+  // document.documentElement.style.setProperty('--gradientColorA', colorAString);
+  // document.documentElement.style.setProperty('--gradientColorB', colorBString);
+
+  /* Set random header title background image */
+  // let headerTitleElement = document.getElementById("headerTitle");
+  // headerTitleElement.style.backgroundImage = "url('" + getRandomMainImageURL() + "')";
 
   /* Determine the requested category (page type) */
   const queryString = window.location.search; /* Example: ?product=shirt&color=blue&newuser&size=m */
@@ -60,9 +87,14 @@ function initPage(event) {
 
   /* Behaviors for different page types */
   if (paramCategory === "home") {
-    produceProjectDirectoryPage();
-  }
-  if (paramCategory === "item") {
+    // produceProjectDirectoryPage();
+  } else if (paramCategory === "thesis") {
+    welcomeTextElem.remove();
+    produceDirectoryOfCategory("thesis");
+  } else if (paramCategory === "senior") {
+    welcomeTextElem.remove();
+    produceDirectoryOfCategory("senior");
+  } else if (paramCategory === "item") {
     produceProjectItemPage();
     welcomeTextElem.remove();
   }
@@ -87,6 +119,33 @@ function produceProjectDirectoryPage() {
   }
 }
 
+function produceDirectoryOfCategory(requestedCategory) {
+
+  /* Creates a project list from the corresponding JSON collection
+     and adds those new elements to the page. */
+
+  console.log("Producing " + requestedCategory + " directory...")
+
+  let browsingHeader = document.createElement('h2');
+  browsingHeader.classList.add("browsingHeader");
+  browsingHeader.textContent = requestedCategory + " projects";
+  mainDisplayElem.appendChild(browsingHeader);
+
+
+  var translatedCategory = "";
+  if (requestedCategory == "thesis") {
+    translatedCategory = pThesisValue;
+  }
+
+  for (var i = 0; i < projectCollection["projects"].length; i++) {
+    console.log("pYearKey = " + projectCollection["projects"][i][pYearKey] + " --- translatedCategory = " + translatedCategory);
+    if (projectCollection["projects"][i][pYearKey] === translatedCategory) {
+      let newProjectLinkElement = produceProjectDirectoryLink(projectCollection["projects"][i]);
+      mainDisplayElem.appendChild(newProjectLinkElement)
+    }
+  }
+}
+
 function produceProjectItemPage() {
 
   if (debugLogs) {
@@ -95,12 +154,25 @@ function produceProjectItemPage() {
 
   /* Loop through collection to find matching project item */
   for (var i = 0; i < projectCollection["projects"].length; i++) {
-    if (projectCollection["projects"][i]["project_id"] == paramProjectID) {
+    if (projectCollection["projects"][i][pIDKey] == paramProjectID) {
       let newProjectItemElement = produceItemContent(projectCollection["projects"][i]);
+
+      /* Create all item content and append to page */
       mainDisplayElem.appendChild(newProjectItemElement);
+
+      /* Enable lightbox for newly generated elements */
+      const lightbox = GLightbox({
+        touchNavigation: true,
+        // openEffect: "fade",
+        // closeEffect: "fade",
+        loop: true,
+      });
+
       break;
     }
   }
+
+  // location.hash = "#mainAnchor"
 }
 
 function produceProjectDirectoryLink(projectJSON) {
@@ -111,12 +183,43 @@ function produceProjectDirectoryLink(projectJSON) {
     // console.log("Producing link for following project JSON:");
   }
 
-  let linkParagraphElement = document.createElement('p');
   let linkElement = document.createElement('a');
-  linkElement.textContent = projectJSON["student_name"] + " – " + projectJSON["project_title"];
-  linkElement.href = "?cat=item&id=" + projectJSON["project_id"];
-  linkParagraphElement.appendChild(linkElement);
-  return linkParagraphElement;
+  linkElement.classList.add("projectPreviewLink");
+  linkElement.href = "?cat=item&id=" + projectJSON[pIDKey];
+
+  let articleElement = document.createElement('article');
+  articleElement.classList.add("projectPreview");
+
+  let projectThumbElement = document.createElement('img');
+  projectThumbElement.src = "projects/" + projectJSON[pIDKey] + "/main.jpg";
+
+  let projectInfoContainer = document.createElement('div');
+
+  let studentNameElement = document.createElement('p');
+  studentNameElement.textContent = projectJSON[sNameKey];
+  let projectTitleElement = document.createElement('p');
+  projectTitleElement.textContent = "\"" + projectJSON[pTitleKey] + "\"";
+  let projectShortDescElement = document.createElement('p');
+  projectShortDescElement.classList.add("shortDescription")
+  projectShortDescElement.textContent = projectJSON[pShortDescKey];
+
+
+  // linkElement.textContent = projectJSON[sNameKey] + " – " + projectJSON[pTitleKey];
+
+  // studentNameElement.appendChild(linkElement);
+
+  // projectInfoContainer.appendChild(linkElement);
+
+  projectInfoContainer.appendChild(studentNameElement);
+  projectInfoContainer.appendChild(projectTitleElement);
+  projectInfoContainer.appendChild(projectShortDescElement);
+
+  articleElement.appendChild(projectThumbElement);
+  articleElement.appendChild(projectInfoContainer);
+
+  linkElement.appendChild(articleElement);
+
+  return linkElement;
 
 }
 
@@ -142,46 +245,51 @@ function produceItemContent(projectJSON) {
   projectAdditionalMediaElem.classList.add("additionalMediaCollection");
 
   /* Student Name */
-  projectStudentElem.textContent = projectJSON["student_name"];
+  projectStudentElem.textContent = projectJSON[sNameKey];
   projectElem.appendChild(projectStudentElem);
 
   /* Project Title */
-  projectTitleElem.textContent = projectJSON["project_title"];
+  projectTitleElem.textContent = projectJSON[pTitleKey];
   projectElem.appendChild(projectTitleElem);
 
   /* Project Main Image */
-  projectMainImageElem.src = "/projectmedia/" + projectJSON["project_id"] + "/main.jpg"; /* OUTPUT: `/projectmedia/95/main.jpg` */
+  projectMainImageElem.src = "projects/" + projectJSON[pIDKey] + "/main.jpg"; /* OUTPUT: `/projectmedia/95/main.jpg` */
   projectMainImageElem.classList.add("projectMainImage");
-  /* PLACEHOLDER */ projectMainImageElem.src = "https://picsum.photos/1280/720";
+  // projectMainImageElem.classList.add('glightbox'); /* For Lightbox functionality */
+  /* PLACEHOLDER */
+  // projectMainImageElem.src = "https://picsum.photos/1280/720";
   projectElem.appendChild(projectMainImageElem);
 
-  /* Project Description */
-  for (var i = 0; i < projectJSON["project_description_paragraphs"].length; i++) {
-    let newParagraph = document.createElement('p');
-    newParagraph.textContent = projectJSON["project_description_paragraphs"][i];
-    projectDescriptionElem.appendChild(newParagraph);
+  /* Project External URL */
+  if (projectJSON[pMainURLKey] != "" && projectJSON[pMainURLKey] != null) {
+    projectExternalLinkElem.href = projectJSON[pMainURLKey];
+    projectExternalLinkElem.setAttribute('target', '_blank');
+    projectExternalLinkElem.textContent = "Visit Project Link";
+    projectElem.appendChild(projectExternalLinkElem);
   }
+
+  /* Project Description */
+  let newParagraph = document.createElement('p');
+  newParagraph.textContent = projectJSON[pLongDescKey];
+  projectDescriptionElem.appendChild(newParagraph);
   projectElem.appendChild(projectDescriptionElem);
 
-  /* Project External URL */
-  if (projectExternalLinkElem != "" && projectExternalLinkElem != null) {
-    projectExternalLinkElem.href = projectJSON["project_external_url"];
-    projectExternalLinkElem.textContent = projectJSON["project_external_url"];
-    projectElem.appendChild(projectExternalLinkElem);
-    // PRODUCE IFRAME EMBED BASED ON YOUTUBE OR VIMEO REGEX?
-  }
-
   /* Project Additional Media */
-  if (projectJSON["project_additional_media_files"].length > 0) {
-    for (var i = 0; i < projectJSON["project_additional_media_files"].length; i++) {
+  if (projectJSON[pAdditionalMediaKey].length > 0) {
+
+    let parsedAdditionalMediaFiles = projectJSON[pAdditionalMediaKey].split(", ");
+
+    for (var i = 0; i < parsedAdditionalMediaFiles.length; i++) {
       /* Create Link */
       let newMediaLink = document.createElement('a');
-      newMediaLink.href = "/projectmedia/" + projectJSON["project_id"] + "/" + projectJSON["project_additional_media_files"][i]; /* OUTPUT: `/projectmedia/95/my_photo.jpg` */
+      newMediaLink.classList.add('glightbox'); /* For Lightbox functionality */
+      newMediaLink.href = "projects/" + projectJSON[pIDKey] + "/" + parsedAdditionalMediaFiles[i]; /* OUTPUT: `/projectmedia/95/my_photo.jpg` */
       newMediaLink.target = "_blank";
       /* Create thumbnail and add inside of link */
       let newMediaThumbnailImg = document.createElement('img');
-      // newMediaThumbnailImg.src = newMediaLink.href;
-      /* PLACEHOLDER */ newMediaThumbnailImg.src = "https://picsum.photos/" + (1000 + (Math.floor(Math.random()*1000))) + "/" + (300 + (Math.floor(Math.random()*1000)));
+      newMediaThumbnailImg.src = newMediaLink.href;
+      /* PLACEHOLDER */
+      // newMediaThumbnailImg.src = "https://picsum.photos/" + (1000 + (Math.floor(Math.random() * 1000))) + "/" + (500 + (Math.floor(Math.random() * 1000)));
       newMediaLink.appendChild(newMediaThumbnailImg);
       /* Add to additional media section */
       projectAdditionalMediaElem.appendChild(newMediaLink);
@@ -189,6 +297,62 @@ function produceItemContent(projectJSON) {
     projectElem.appendChild(projectAdditionalMediaElem);
   }
 
+  /* Project External Links */
+  var hasExternalLinks = true;
+  let externalLinkCollection = document.createElement('section');
+  externalLinkCollection.classList.add("externalLinkCollection");
+
+  if (projectJSON[sPersonalURLKey] != "" && projectJSON[sPersonalURLKey] != null) {
+    hasExternalLinks = true;
+    let projectPersonalLink = document.createElement('a');
+    projectPersonalLink.href = projectJSON[sPersonalURLKey];
+    projectPersonalLink.target = "_blank";
+    projectPersonalLink.textContent = "Personal Site";
+    externalLinkCollection.appendChild(projectPersonalLink);
+  }
+  if (projectJSON[sLinkedinKey] != "" && projectJSON[sLinkedinKey] != null) {
+    hasExternalLinks = true;
+    let linkedinLink = document.createElement('a');
+    linkedinLink.href = projectJSON[sPersonalURLKey];
+    linkedinLink.target = "_blank";
+    linkedinLink.textContent = "Linkedin";
+    externalLinkCollection.appendChild(linkedinLink);
+  }
+  if (projectJSON[sInstagramKey] != "" && projectJSON[sInstagramKey] != null) {
+    hasExternalLinks = true;
+    let instagramLink = document.createElement('a');
+    instagramLink.href = "https://www.instagram.com/" + projectJSON[sInstagramKey] + "/";
+    instagramLink.target = "_blank";
+    instagramLink.textContent = "Instagram";
+    externalLinkCollection.appendChild(instagramLink);
+  }
+  if (projectJSON[sYoutubeKey] != "" && projectJSON[sYoutubeKey] != null) {
+    hasExternalLinks = true;
+    let youtubeLink = document.createElement('a');
+    youtubeLink.href = projectJSON[sYoutubeKey];
+    youtubeLink.target = "_blank";
+    youtubeLink.textContent = "YouTube";
+    externalLinkCollection.appendChild(youtubeLink);
+  }
+  if (projectJSON[sTwitterKey] != "" && projectJSON[sTwitterKey] != null) {
+    hasExternalLinks = true;
+    let twitterLink = document.createElement('a');
+    twitterLink.href = "https://twitter.com/" + projectJSON[sTwitterKey] + "/";
+    twitterLink.target = "_blank";
+    twitterLink.textContent = "Twitter";
+    externalLinkCollection.appendChild(twitterLink);
+  }
+
+  if (hasExternalLinks) {
+    projectElem.appendChild(externalLinkCollection);
+  }
+
   return projectElem;
 
+}
+
+function getRandomMainImageURL() {
+  let randomProjectIndex = Math.floor(Math.random() * projectCollection["projects"].length);
+  let randomImageString = "projects/" + projectCollection["projects"][randomProjectIndex][pIDKey] + "/main.jpg";
+  return randomImageString;
 }
