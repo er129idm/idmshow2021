@@ -14,8 +14,8 @@
   --gradientColorB: #ffffff;
   --foregroundColor: #313;
   /* --foregroundColor: #3c4f96; */
-  --hoverColor: #57068c;
-  /* --hoverColor: #3c4f96; */
+  /* --hoverColor: #57068c; */
+  --hoverColor: var(--foregroundColor);
   --headerFont: 'Computer says no', monospace;
   --headerWeight: normal;
   --headerTransform: uppercase;
@@ -223,6 +223,7 @@ nav>p:first-child {
 
 .projectPreview > img {
   width: 100%;
+  height: 100%;
   max-height: 200px;
   object-fit: cover;
   object-position: center center;
@@ -266,6 +267,15 @@ nav>p:first-child {
 
 .projectDescription p {
   line-height: 2em;
+}
+
+.sectionHeader {
+  margin-top: 32px !important;
+  margin-bottom: 8px;
+}
+
+.projectTags > a {
+  margin-right: 8px;
 }
 
 .additionalMediaCollection::before {

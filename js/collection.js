@@ -19,7 +19,7 @@ let projectCollection = {
       "Supporting Images": "",
       "Project Link": "https://en.wikipedia.org/wiki/Sophia_Petrillo",
       "Project Hashtag #": "#idmnyu",
-      "Project Themes & Keywords": "emerging technology, communication, travel"
+      "Project Themes & Keywords": "emerging technology, communication, travel, film, video, masks, covid19"
     },
     {
       "Full Name": "Torem Kipsum",
@@ -39,8 +39,8 @@ let projectCollection = {
       "Main Image": "https://drive.google.com/u/0/open?usp=forms_web&id=1grOfek5cB48kyQ_9SZqfDLeEORoxKkNn",
       "Supporting Images": "img-1.jpg, img-2.jpg, model-a.1.JPG, model-a.2.JPG, model-a.3.JPG, model-b.1.JPG, model-b.2.JPG",
       "Project Link": "https://en.wikipedia.org/wiki/Sophia_Petrillo",
-      "Project Hashtag #": "#idmnyu",
-      "Project Themes & Keywords": "video, product design, filmmaking, speculative design"
+      "Project Hashtag #": "#idmnyu, #masklife",
+      "Project Themes & Keywords": "product design, speculative design, masks, covid19, nature"
     },
     {
       "Full Name": "Lauren Ipsum",
@@ -61,7 +61,7 @@ let projectCollection = {
       "Supporting Images": "AE5EF71C-F188-4BD7-913B-27F9FC0E09EC.png",
       "Project Link": "https://en.wikipedia.org/wiki/Sophia_Petrillo",
       "Project Hashtag #": "#idmnyu",
-      "Project Themes & Keywords": "emerging technology, communication, travel"
+      "Project Themes & Keywords": "emerging technology, communication, travel, nature"
     },
     {
       "Full Name": "Sophia Petrillo",
@@ -79,10 +79,10 @@ let projectCollection = {
       "Short Description of your work (1 sentence)": "Sed ut perspiciatis unde omnis iste natus error sit voluptatem.",
       "Long Description of your work (4-6 sentences)": "At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga.  Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est, omnis dolor repellendus.",
       "Main Image": "https://drive.google.com/u/0/open?usp=forms_web&id=1grOfek5cB48kyQ_9SZqfDLeEORoxKkNn",
-      "Supporting Images": "https://drive.google.com/u/0/open?usp=forms_web&id=1BmasFuY8ISbdN-EyS6cCYyPLfUDGS3kg;https://drive.google.com/u/0/open?usp=forms_web&id=1dyo9AM2kWVLEDW_bc937cEHJPNIXDfBq",
+      "Supporting Images": "img01 - Gabriella Cammarata.jpg",
       "Project Link": "https://en.wikipedia.org/wiki/Sophia_Petrillo",
       "Project Hashtag #": "#idmnyu",
-      "Project Themes & Keywords": "emerging technology, communication, travel"
+      "Project Themes & Keywords": "emerging technology, communication, travel, nature"
     }
   ]
 };

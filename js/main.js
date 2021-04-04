@@ -23,6 +23,11 @@ let sYoutubeKey = "Youtube";
 let sTwitterKey = "Twitter Handle";
 let pAdditionalMediaKey = "Supporting Images";
 
+let pFreshmanValue = "Freshman";
+let pSophmoreValue = "Sophmore"
+let pJuniorValue = "Junior"
+let pSeniorValue = "Senior (Senior Project)";
+let pFirstGradValue = "First Year Grad";
 let pThesisValue = "Second Year Grad (Thesis Project)";
 
 
@@ -49,9 +54,9 @@ function initPage(event) {
   }
 
   /* Dynamic page color */
-  let newRandomGradientColorA_R = Math.floor(240 + Math.random() * 10);
-  let newRandomGradientColorA_G = Math.floor(230 + Math.random() * 10);
-  let newRandomGradientColorA_B = Math.floor(240 + Math.random() * 10);
+  let newRandomGradientColorA_R = Math.floor(150 + Math.random() * 150);
+  let newRandomGradientColorA_G = Math.floor(150 + Math.random() * 50);
+  let newRandomGradientColorA_B = Math.floor(150 + Math.random() * 150);
   let newRandomGradientColorB_R = Math.floor(240 + Math.random() * 10);
   let newRandomGradientColorB_G = Math.floor(230 + Math.random() * 10);
   let newRandomGradientColorB_B = Math.floor(240 + Math.random() * 10);
@@ -76,6 +81,10 @@ function initPage(event) {
   const parsedSiteProjectIDParam = urlParams.get('id');
   paramProjectID = parsedSiteProjectIDParam;
 
+  /* Determine the requested Tag category value if appropriate */
+  const parsedValParam = urlParams.get('val');
+  parsedVal = parsedValParam;
+
   if (debugLogs) {
     console.log("paramCategory is: " + paramCategory);
     console.log("paramProjectID is: " + paramProjectID);
@@ -94,7 +103,12 @@ function initPage(event) {
   } else if (paramCategory === "senior") {
     welcomeTextElem.remove();
     produceDirectoryOfCategory("senior");
-  } else if (paramCategory === "item") {
+  }
+  else if (paramCategory === "tag") {
+    welcomeTextElem.remove();
+    produceDirectoryOfTag(parsedVal);
+  }
+  else if (paramCategory === "item") {
     produceProjectItemPage();
     welcomeTextElem.remove();
   }
@@ -143,6 +157,56 @@ function produceDirectoryOfCategory(requestedCategory) {
       let newProjectLinkElement = produceProjectDirectoryLink(projectCollection["projects"][i]);
       mainDisplayElem.appendChild(newProjectLinkElement)
     }
+  }
+}
+
+
+function produceDirectoryOfTag(requestedTag) {
+
+  /* Creates a project list from the corresponding JSON collection
+     and adds those new elements to the page. */
+
+  console.log("Producing " + requestedTag + " directory...")
+
+  let browsingHeader = document.createElement('h2');
+  browsingHeader.classList.add("browsingHeader");
+  browsingHeader.textContent = "Browsing: " + requestedTag;
+  mainDisplayElem.appendChild(browsingHeader);
+
+  /* Loop through every project and see if it has a matching Tag */
+  for (var i = 0; i < projectCollection["projects"].length; i++) {
+    let splitTags = projectCollection["projects"][i][pHashtagsKey].split(", ");
+    let splitKeywords = projectCollection["projects"][i][pKeywordsKey].split(", ");
+
+    var tagMatch = false;
+    for (var t = 0; t < splitTags.length; t++) {
+      var cleanedTag = splitTags[t].replace("#", "");
+      if (requestedTag == cleanedTag) {tagMatch = true;}
+    }
+
+    var keywordMatch = false;
+    for (var t = 0; t < splitKeywords.length; t++) {
+      var cleanedKeyword = splitKeywords[t].replace("#", "");
+      console.log("Checking keyword: " + cleanedKeyword);
+      if (requestedTag == cleanedKeyword) {keywordMatch = true;}
+    }
+
+
+    if (tagMatch || keywordMatch) {
+      let newProjectLinkElement = produceProjectDirectoryLink(projectCollection["projects"][i]);
+      mainDisplayElem.appendChild(newProjectLinkElement)
+    }
+
+    // var tagMatch = false;
+
+
+
+
+
+    // if (projectCollection["projects"][i][pYearKey] === translatedCategory) {
+    //   let newProjectLinkElement = produceProjectDirectoryLink(projectCollection["projects"][i]);
+    //   mainDisplayElem.appendChild(newProjectLinkElement)
+    // }
   }
 }
 
@@ -240,6 +304,8 @@ function produceItemContent(projectJSON) {
   let projectExternalLinkElem = document.createElement('a');
   let projectDescriptionElem = document.createElement('section');
   projectDescriptionElem.classList.add("projectDescription");
+  let projectTagCollectionElem = document.createElement('section');
+  projectTagCollectionElem.classList.add("projectTags");
   let projectVideoEmbedElem = document.createElement('section');
   let projectAdditionalMediaElem = document.createElement('section');
   projectAdditionalMediaElem.classList.add("additionalMediaCollection");
@@ -273,6 +339,46 @@ function produceItemContent(projectJSON) {
   newParagraph.textContent = projectJSON[pLongDescKey];
   projectDescriptionElem.appendChild(newParagraph);
   projectElem.appendChild(projectDescriptionElem);
+
+  /* Project Hashtags and Keywords */
+  var hasTags = false;
+
+  if (projectJSON[pHashtagsKey]!= "" && projectJSON[pHashtagsKey] != null) {
+    console.log("Adding tags... #####");
+    hasTags = true;
+    let splitTags = projectJSON[pHashtagsKey].split(", ");
+    for (var i = 0; i < splitTags.length; i++) {
+      var newTagElem = document.createElement('a');
+      var cleanedTag = splitTags[i].replace("#", "");
+      newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+      newTagElem.textContent = "#" + cleanedTag;
+      console.log("Cleaned tag = " + cleanedTag);
+      projectTagCollectionElem.appendChild(newTagElem);
+    }
+  }
+
+  if (projectJSON[pKeywordsKey]!= "" && projectJSON[pKeywordsKey] != null) {
+    console.log("Adding tags... #####");
+    hasTags = true;
+    let splitTags = projectJSON[pKeywordsKey].split(", ");
+    for (var i = 0; i < splitTags.length; i++) {
+      var newTagElem = document.createElement('a');
+      var cleanedTag = splitTags[i].replace("#", "");
+      newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+      newTagElem.textContent = cleanedTag;
+      console.log("Cleaned tag = " + cleanedTag);
+      projectTagCollectionElem.appendChild(newTagElem);
+    }
+
+  }
+
+  if (hasTags) {
+    let tagSectionHeadlineElem = document.createElement('h3');
+    tagSectionHeadlineElem.classList.add("sectionHeader");
+    tagSectionHeadlineElem.textContent = "Tags & Themes";
+    projectElem.appendChild(tagSectionHeadlineElem);
+    projectElem.appendChild(projectTagCollectionElem);
+  }
 
   /* Project Additional Media */
   if (projectJSON[pAdditionalMediaKey].length > 0) {
