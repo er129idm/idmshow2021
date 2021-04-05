@@ -44,6 +44,10 @@ body, html {
   color: var(--foregroundColor);
 }
 
+body {
+  /* font-size: 1.2em; */
+}
+
 a {
   color: var(--foregroundColor);
   /* color: var(--gradientColorB); */
@@ -306,7 +310,9 @@ nav>p:first-child {
 }
 
 .additionalMediaCollection a:hover img, .projectPreview:hover img {
-  border-color: var(--hoverColor);
+  /* border: 3px solid var(--gradientColorA);
+  padding: -3px;
+  margin-bottom: -3px; */
 }
 
 .additionalMediaCollection img {
@@ -348,6 +354,7 @@ footer {
   display: block;
   grid-area: footer;
   margin-bottom: 32px;
+  text-align: center;
 }
 
 /* ----- RESPONSIVE MEDIA QUERIES ----- */
