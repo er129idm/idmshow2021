@@ -82,7 +82,7 @@ let projectCollection = {
       "Supporting Images": "img01 - Gabriella Cammarata.jpg",
       "Project Link": "https://en.wikipedia.org/wiki/Sophia_Petrillo",
       "Project Hashtag #": "#idmnyu",
-      "Project Themes & Keywords": "emerging technology, communication, travel, nature"
+      "Project Themes & Keywords": "emerging technology, communication, nature, travel"
     }
   ]
 };

@@ -103,12 +103,10 @@ function initPage(event) {
   } else if (paramCategory === "senior") {
     welcomeTextElem.remove();
     produceDirectoryOfCategory("senior");
-  }
-  else if (paramCategory === "tag") {
+  } else if (paramCategory === "tag") {
     welcomeTextElem.remove();
     produceDirectoryOfTag(parsedVal);
-  }
-  else if (paramCategory === "item") {
+  } else if (paramCategory === "item") {
     produceProjectItemPage();
     welcomeTextElem.remove();
   }
@@ -173,6 +171,14 @@ function produceDirectoryOfTag(requestedTag) {
   browsingHeader.textContent = "Browsing: " + requestedTag;
   mainDisplayElem.appendChild(browsingHeader);
 
+  if (requestedTag == "" || requestedTag === null) {
+    browsingHeader.textContent = "Browsing: All Categories";
+    mainDisplayElem.appendChild(produceCompleteTagDirectory());
+    // return
+  };
+
+  /* Produce complete tag directory */
+
   /* Loop through every project and see if it has a matching Tag */
   for (var i = 0; i < projectCollection["projects"].length; i++) {
     let splitTags = projectCollection["projects"][i][pHashtagsKey].split(", ");
@@ -181,14 +187,18 @@ function produceDirectoryOfTag(requestedTag) {
     var tagMatch = false;
     for (var t = 0; t < splitTags.length; t++) {
       var cleanedTag = splitTags[t].replace("#", "");
-      if (requestedTag == cleanedTag) {tagMatch = true;}
+      if (requestedTag == cleanedTag) {
+        tagMatch = true;
+      }
     }
 
     var keywordMatch = false;
     for (var t = 0; t < splitKeywords.length; t++) {
       var cleanedKeyword = splitKeywords[t].replace("#", "");
-      console.log("Checking keyword: " + cleanedKeyword);
-      if (requestedTag == cleanedKeyword) {keywordMatch = true;}
+      // console.log("Checking keyword: " + cleanedKeyword);
+      if (requestedTag == cleanedKeyword) {
+        keywordMatch = true;
+      }
     }
 
 
@@ -256,6 +266,7 @@ function produceProjectDirectoryLink(projectJSON) {
 
   let projectThumbElement = document.createElement('img');
   projectThumbElement.src = "projects/" + projectJSON[pIDKey] + "/main.jpg";
+  projectThumbElement.setAttribute("loading", "lazy");
 
   let projectInfoContainer = document.createElement('div');
 
@@ -321,6 +332,7 @@ function produceItemContent(projectJSON) {
   /* Project Main Image */
   projectMainImageElem.src = "projects/" + projectJSON[pIDKey] + "/main.jpg"; /* OUTPUT: `/projectmedia/95/main.jpg` */
   projectMainImageElem.classList.add("projectMainImage");
+  projectMainImageElem.setAttribute("loading", "lazy");
   // projectMainImageElem.classList.add('glightbox'); /* For Lightbox functionality */
   /* PLACEHOLDER */
   // projectMainImageElem.src = "https://picsum.photos/1280/720";
@@ -343,32 +355,34 @@ function produceItemContent(projectJSON) {
   /* Project Hashtags and Keywords */
   var hasTags = false;
 
-  if (projectJSON[pHashtagsKey]!= "" && projectJSON[pHashtagsKey] != null) {
+  if (projectJSON[pHashtagsKey] != "" && projectJSON[pHashtagsKey] != null) {
     console.log("Adding tags... #####");
     hasTags = true;
-    let splitTags = projectJSON[pHashtagsKey].split(", ");
-    for (var i = 0; i < splitTags.length; i++) {
-      var newTagElem = document.createElement('a');
-      var cleanedTag = splitTags[i].replace("#", "");
-      newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
-      newTagElem.textContent = "#" + cleanedTag;
-      console.log("Cleaned tag = " + cleanedTag);
-      projectTagCollectionElem.appendChild(newTagElem);
-    }
+    produceTagLinks(projectJSON[pHashtagsKey], projectTagCollectionElem);
+    // let splitTags = projectJSON[pHashtagsKey].split(", ");
+    // for (var i = 0; i < splitTags.length; i++) {
+    //   var newTagElem = document.createElement('a');
+    //   var cleanedTag = splitTags[i].replace("#", "");
+    //   newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+    //   newTagElem.textContent = "#" + cleanedTag;
+    //   console.log("Cleaned tag = " + cleanedTag);
+    //   projectTagCollectionElem.appendChild(newTagElem);
+    // }
   }
 
-  if (projectJSON[pKeywordsKey]!= "" && projectJSON[pKeywordsKey] != null) {
+  if (projectJSON[pKeywordsKey] != "" && projectJSON[pKeywordsKey] != null) {
     console.log("Adding tags... #####");
     hasTags = true;
-    let splitTags = projectJSON[pKeywordsKey].split(", ");
-    for (var i = 0; i < splitTags.length; i++) {
-      var newTagElem = document.createElement('a');
-      var cleanedTag = splitTags[i].replace("#", "");
-      newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
-      newTagElem.textContent = cleanedTag;
-      console.log("Cleaned tag = " + cleanedTag);
-      projectTagCollectionElem.appendChild(newTagElem);
-    }
+    produceTagLinks(projectJSON[pKeywordsKey], projectTagCollectionElem);
+    // let splitTags = projectJSON[pKeywordsKey].split(", ");
+    // for (var i = 0; i < splitTags.length; i++) {
+    //   var newTagElem = document.createElement('a');
+    //   var cleanedTag = splitTags[i].replace("#", "");
+    //   newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+    //   newTagElem.textContent = cleanedTag;
+    //   console.log("Cleaned tag = " + cleanedTag);
+    //   projectTagCollectionElem.appendChild(newTagElem);
+    // }
 
   }
 
@@ -394,8 +408,10 @@ function produceItemContent(projectJSON) {
       /* Create thumbnail and add inside of link */
       let newMediaThumbnailImg = document.createElement('img');
       newMediaThumbnailImg.src = newMediaLink.href;
+      newMediaThumbnailImg.setAttribute("loading", "lazy");
       /* PLACEHOLDER */
       // newMediaThumbnailImg.src = "https://picsum.photos/" + (1000 + (Math.floor(Math.random() * 1000))) + "/" + (500 + (Math.floor(Math.random() * 1000)));
+      newMediaThumbnailImg.setAttribute("loading", "lazy");
       newMediaLink.appendChild(newMediaThumbnailImg);
       /* Add to additional media section */
       projectAdditionalMediaElem.appendChild(newMediaLink);
@@ -455,6 +471,79 @@ function produceItemContent(projectJSON) {
 
   return projectElem;
 
+}
+
+/* Receives a string of comma separated tags and a destination element, and returns that element with link elements appended */
+function produceTagLinks(incomingTagList, destinationElement) {
+
+  let splitTags = incomingTagList.split(", ");
+  for (var i = 0; i < splitTags.length; i++) {
+    var newTagElem = document.createElement('a');
+    var cleanedTag = splitTags[i].replace("#", "");
+    newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+    // newTagElem.textContent = "#" + cleanedTag;
+    newTagElem.textContent = cleanedTag;
+    console.log("Cleaned tag = " + cleanedTag);
+    destinationElement.appendChild(newTagElem);
+  }
+
+}
+
+function produceCompleteTagDirectory() {
+
+  var allTagList = [];
+
+  console.log(projectCollection["projects"].length + " projects...");
+  let destinationElement = document.createElement('div');
+  destinationElement.classList.add("tagDirectory");
+
+  for (var i = 0; i < projectCollection["projects"].length; i++) {
+
+    console.log("Collating project #" + i + "...");
+    let splitTags = projectCollection["projects"][i][pHashtagsKey].split(", ");
+    let splitKeywords = projectCollection["projects"][i][pKeywordsKey].split(", ");
+
+    console.log(splitTags);
+    console.log(splitKeywords);
+
+    /* Collate "tags" */
+    for (var t = 0; t < splitTags.length; t++) {
+      var newItem = splitTags[t];
+      newItem = newItem.replace("#", "");
+      console.log(t + ": " + newItem);
+      allTagList.indexOf(newItem) === -1 ? allTagList.push(newItem) : console.log("This item already exists");
+    }
+
+    /* Collate "keywords" */
+    for (var t = 0; t < splitKeywords.length; t++) {
+      console.log(t + ": " + newItem);
+      var newItem = splitKeywords[t];
+      allTagList.indexOf(newItem) === -1 ? allTagList.push(newItem) : console.log("This item already exists");
+    }
+
+    /* Produce link elements */
+    console.log(allTagList);
+
+  }
+
+  /* Randomize array */
+  // allTagList.sort(() => Math.random() - 0.5);
+
+  /* Alphabetize array */
+  allTagList.sort();
+
+  for (var t = 0; t < allTagList.length; t++) {
+    var newTagElem = document.createElement('a');
+    var cleanedTag = allTagList[t];
+    newTagElem.href = "index.html?cat=tag&val=" + cleanedTag;
+    // newTagElem.textContent = "#" + cleanedTag;
+    newTagElem.textContent = cleanedTag;
+    console.log("Cleaned tag = " + cleanedTag);
+    destinationElement.appendChild(newTagElem);
+    destinationElement.htmlValue += " ";
+  }
+
+  return destinationElement;
 }
 
 function getRandomMainImageURL() {
